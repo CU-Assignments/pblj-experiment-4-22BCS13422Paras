@@ -1,0 +1,65 @@
+Develop a ticket booking system with synchronized threads to ensure no double booking of seats. Use thread priorities to simulate VIP bookings being processed first.
+CODE:-
+class TicketBooking {
+    private int availableSeats = 10; // Total available seats
+
+    // Synchronized method to book a seat
+    public synchronized void bookSeat(String customerType) {
+        if (availableSeats > 0) {
+            System.out.println(customerType + " is booking a seat...");
+            availableSeats--;
+            System.out.println(customerType + " booked a seat successfully. Seats left: " + availableSeats);
+        } else {
+            System.out.println(customerType + " tried to book a seat, but no seats are available.");
+        }
+    }
+}
+
+class BookingThread extends Thread {
+    private TicketBooking ticketBooking;
+    private String customerType;
+
+    public BookingThread(TicketBooking ticketBooking, String customerType) {
+        this.ticketBooking = ticketBooking;
+        this.customerType = customerType;
+    }
+
+    @Override
+    public void run() {
+        ticketBooking.bookSeat(customerType);
+    }
+}
+
+public class TicketBookingSystem {
+    public static void main(String[] args) {
+        TicketBooking ticketBooking = new TicketBooking();
+
+        // Create threads for VIP customers
+        BookingThread vip1 = new BookingThread(ticketBooking, "VIP Customer 1");
+        BookingThread vip2 = new BookingThread(ticketBooking, "VIP Customer 2");
+        BookingThread regular1 = new BookingThread(ticketBooking, "Regular Customer 1");
+        BookingThread regular2 = new BookingThread(ticketBooking, "Regular Customer 2");
+
+        // Set thread priorities
+        vip1.setPriority(Thread.MAX_PRIORITY); // VIP customers have high priority
+        vip2.setPriority(Thread.MAX_PRIORITY);
+        regular1.setPriority(Thread.NORM_PRIORITY); // Regular customers have normal priority
+        regular2.setPriority(Thread.NORM_PRIORITY);
+
+        // Start the threads
+        vip1.start();
+        vip2.start();
+        regular1.start();
+        regular2.start();
+    }
+}
+
+OUTPUT:-
+VIP Customer 1 is booking a seat...
+VIP Customer 1 booked a seat successfully. Seats left: 9
+VIP Customer 2 is booking a seat...
+VIP Customer 2 booked a seat successfully. Seats left: 8
+Regular Customer 1 is booking a seat...
+Regular Customer 1 booked a seat successfully. Seats left: 7
+Regular Customer 2 is booking a seat...
+Regular Customer 2 booked a seat successfully. Seats left: 6
