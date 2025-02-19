@@ -1,0 +1,83 @@
+1. Create a program to collect and store all the cards to assist the users in finding all the cards in a given symbol using Collection interface.
+code:-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Card {
+    String symbol; // e.g., Hearts, Diamonds, Clubs, Spades
+    String value;  // e.g., Ace, 2, 3, ..., King
+
+    Card(String symbol, String value) {
+        this.symbol = symbol;
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value + " of " + symbol;
+    }
+}
+
+public class SimpleCardCollection {
+    Map<String, Collection<Card>> cardMap = new HashMap<>();
+
+    void addCard(Card card) {
+        cardMap.putIfAbsent(card.symbol, new ArrayList<>());
+        cardMap.get(card.symbol).add(card);
+    }
+
+    Collection<Card> findCardsBySymbol(String symbol) {
+        return cardMap.getOrDefault(symbol, new ArrayList<>());
+    }
+
+    public static void main(String[] args) {
+        SimpleCardCollection collection = new SimpleCardCollection();
+        Scanner scanner = new Scanner(System.in);
+
+        // Adding cards
+        while (true) {
+            System.out.print("Enter card value (e.g., Ace, 2, 3, ..., King): ");
+            String value = scanner.nextLine();
+            System.out.print("Enter card symbol (e.g., Hearts, Diamonds, Clubs, Spades): ");
+            String symbol = scanner.nextLine();
+            collection.addCard(new Card(symbol, value));
+
+            System.out.print("Do you want to add another card? (yes/no): ");
+            String continueInput = scanner.nextLine();
+            if (!continueInput.equalsIgnoreCase("yes")) {
+                break;
+            }
+        }
+
+        // Finding cards by symbol
+        System.out.print("Enter symbol to find cards (e.g., Hearts, Diamonds, Clubs, Spades): ");
+        String searchSymbol = scanner.nextLine();
+        Collection<Card> foundCards = collection.findCardsBySymbol(searchSymbol);
+
+        if (foundCards.isEmpty()) {
+            System.out.println("No cards found for symbol: " + searchSymbol);
+        } else {
+            System.out.println("Cards found for symbol " + searchSymbol + ":");
+            for (Card card : foundCards) {
+                System.out.println(card);
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+OUTPUT:-
+Enter card value (e.g., Ace, 2, 3, ..., King): Ace
+Enter card symbol (e.g., Hearts, Diamonds, Clubs, Spades): Hearts
+Do you want to add another card? (yes/no): yes
+Enter card value (e.g., Ace, 2, 3, ..., King): King
+Enter card symbol (e.g., Hearts, Diamonds, Clubs, Spades): Hearts
+Do you want to add another card? (yes/no): no
+Enter symbol to find cards (e.g., Hearts, Diamonds, Clubs, Spades): Hearts
+Cards found for symbol Hearts:
+Ace of Hearts
+King of Hearts
